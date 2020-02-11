@@ -1,0 +1,43 @@
+service: sls-${self:custom.service}
+
+custom:
+  service: "terraform-aws-cost-notify-slack"
+  stage: "production"
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.7
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ce:GetCostAndUsage"
+      Resource: "*"
+
+  role:
+    Fn::ImportValue: tf-${self:custom.service}-${self:custom.stage}-LambdaExecutionRoleArn
+  region: "us-east-1"
+  stage: ${self:custom.stage}
+
+functions:
+  report_cost:
+    handler: aws-billing-to-slack/handler.report_cost
+
+    events:
+      # Every day at 15:00 UTC / 10am CDT
+      - schedule: cron(0 15 * * ? *)
+
+    environment:
+      SLACK_WEBHOOK_URL: ${env:SLACK_WEBHOOK_URL}
+
+layers:
+  # Layers defined within a serverless project need be named with a prefix
+  # matching the service name in one of the following formats:
+  # - `sls-{service_name}-{stage}-{ANYTHING}`
+  # - `{sls_service_name}-{stage}-{ANYTHING}`
+  vendor:
+    path: layers/vendor
+    name: sls-${self:custom.service}-${self:custom.stage}-vendor

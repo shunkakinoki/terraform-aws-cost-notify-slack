@@ -1,0 +1,3 @@
+[submodule "aws-billing-to-slack"]
+	path = aws-billing-to-slack
+	url = https://github.com/iandees/aws-billing-to-slack
