@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = "==19.10b0"
+flake8 = "*"
+isort = "*"
+tox = "*"
+
+[packages]
+
+[pipenv]
+allow_prereleases = true
+
+[requires]
+python_version = "3.7"
+
+[scripts]
